@@ -58,5 +58,6 @@ export async function generateThumbnail(filename) {
  * // Returns: { width: 1920, height: 1080 }
  */
 export async function getImageDimensions(filepath) {
+  
   // Your code here
 }
