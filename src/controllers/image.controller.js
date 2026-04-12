@@ -18,32 +18,31 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  * 6. Save metadata to database (Image.create)
  * 7. Return 201 with image metadata
  */
-
 export async function uploadImage(req, res, next) {
   try {
-    // check file
+
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
     const { filename, originalname, mimetype, size } = req.file;
 
-    // validate mimetype
+
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!allowedTypes.includes(mimetype)) {
       return res.status(400).json({ error: "Invalid file type" });
     }
 
-    // build file path
+
     const filepath = path.join(__dirname, "../uploads", filename);
 
-    // get image dimensions
+ 
     const { width, height } = await getImageDimensions(filepath);
 
-    // generate thumbnail
+
     await generateThumbnail(filename);
 
-    // parse optional fields
+ 
     const description = (req.body.description || "").trim();
 
     const tags = req.body.tags
@@ -53,10 +52,10 @@ export async function uploadImage(req, res, next) {
           .filter((tag) => tag.length > 0)
       : [];
 
-    // remove duplicate tags
+
     const uniqueTags = [...new Set(tags)];
 
-    // save to db
+   
     const image = await Image.create({
       filename,
       originalName: originalname,
@@ -68,7 +67,7 @@ export async function uploadImage(req, res, next) {
       tags: uniqueTags,
     });
 
-    // response
+
     return res.status(201).json({
       message: "Image uploaded successfully",
       data: image,
