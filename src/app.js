@@ -29,7 +29,7 @@ export function createApp() {
 
   app.use(express.json());
 
-  const uploadsDir = path.join(__dirname, "uploads");
+  const uploadsDir = path.join(__dirname, "../uploads");
   const thumbnailsDir = path.join(uploadsDir, "thumbnails");
 
   fs.mkdirSync(uploadsDir, { recursive: true });

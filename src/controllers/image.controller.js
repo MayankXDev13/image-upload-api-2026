@@ -21,15 +21,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export async function uploadImage(req, res, next) {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
+      return res.status(400).json({ error: { message: "No file uploaded" } });
     }
 
     const { filename, originalname, mimetype, size } = req.file;
 
-    const filepath = path.join(__dirname, "../uploads", filename);
+    const filepath = path.join(__dirname, "../../uploads", filename);
     const { width, height } = await getImageDimensions(filepath);
 
-    await generateThumbnail(filename);
+    const thumbnailFilename = await generateThumbnail(filename);
 
     const description = (req.body.description || "").trim();
 
@@ -51,12 +51,10 @@ export async function uploadImage(req, res, next) {
       height,
       description,
       tags: uniqueTags,
+      thumbnailFilename,
     });
 
-    return res.status(201).json({
-      message: "Image uploaded successfully",
-      data: image,
-    });
+    return res.status(201).json(image);
   } catch (error) {
     next(error);
   }
@@ -199,16 +197,11 @@ export async function downloadImage(req, res, next) {
     if (!image) {
       return res.status(404).json({ error: "Image not found" });
     }
-    const filepath = path.join(__dirname, "../uploads", image.filename);
-
-    if (!fs.existsSync(filepath)) {
-      return res.status(404).json({ error: "File not found" });
-    }
-
-    res.setHeader("Content-Type", image.mimetype);
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${image.originalName}"`,
+const filepath = path.join(__dirname, "../../uploads", image.filename);
+    const thumbnailPath = path.join(
+      __dirname,
+      "../../uploads/thumbnails",
+      `${image.filename}.jpg`,
     );
 
     return res.sendFile(filepath);
@@ -281,7 +274,7 @@ export async function deleteImage(req, res, next) {
       return res.status(404).json({ error: "Image not found" });
     }
 
-    const filePath = path.join(__dirname, "../uploads", image.filename);
+    const filePath = path.join(__dirname, "../../uploads", image.filename);
 
     try {
       await fs.promises.unlink(filePath);

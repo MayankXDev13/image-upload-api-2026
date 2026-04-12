@@ -3,7 +3,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const THUMBNAILS_DIR = path.join(__dirname, "../../uploads/thumbnails");
+const UPLOADS_DIR = path.join(__dirname, "../../uploads");
+const THUMBNAILS_DIR = path.join(UPLOADS_DIR, "thumbnails");
 
 /**
  * TODO: Generate thumbnail for uploaded image
@@ -39,15 +40,21 @@ export async function generateThumbnail(filename) {
   const thumbnailName = "thumb-" + filename.replace(/\.\w+$/, ".jpg");
   const outputPath = path.join(THUMBNAILS_DIR, thumbnailName);
 
-  await sharp(inputPath)
-    .resize({
-      width: 200,
-      height: 200,
-      fit: "inside",
-      withoutEnlargement: true,
-    })
-    .jpeg({ quality: 80 })
-    .toFile(outputPath);
+  const metadata = await sharp(inputPath).metadata();
+  if (metadata.width <= 200 && metadata.height <= 200) {
+    const fs = await import("fs");
+    fs.copyFileSync(inputPath, outputPath);
+  } else {
+    await sharp(inputPath)
+      .resize({
+        width: 200,
+        height: 200,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .jpeg({ quality: 50 })
+      .toFile(outputPath);
+  }
 
   return thumbnailName;
 }

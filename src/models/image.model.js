@@ -54,6 +54,11 @@ const imageSchema = new mongoose.Schema(
       required: true,
       min: 1,
     },
+    height: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
     thumbnailFilename: {
       type: String,
       required: true,
