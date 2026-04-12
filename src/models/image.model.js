@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 /**
  * TODO: Define Image schema
  *
@@ -55,11 +54,6 @@ const imageSchema = new mongoose.Schema(
       required: true,
       min: 1,
     },
-    height: {
-      type: Number,
-      required: true,
-      min: 1,
-    },
     thumbnailFilename: {
       type: String,
       required: true,
@@ -87,8 +81,6 @@ const imageSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
-
-
 
 // TODO: Add indexes
 // imageSchema.index({ uploadDate: -1 });

@@ -4,7 +4,6 @@ import crypto from "crypto";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-
 /**
  * TODO: Configure multer for image uploads
  *
@@ -33,8 +32,6 @@ import { fileURLToPath } from "url";
  *
  * export const upload = multer({ storage, fileFilter, limits: { ... } });
  */
-
-
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const UPLOAD_DIR = path.join(__dirname, "../../uploads");

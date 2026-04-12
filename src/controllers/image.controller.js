@@ -20,29 +20,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  */
 export async function uploadImage(req, res, next) {
   try {
-
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
     const { filename, originalname, mimetype, size } = req.file;
 
-
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(mimetype)) {
-      return res.status(400).json({ error: "Invalid file type" });
-    }
-
-
     const filepath = path.join(__dirname, "../uploads", filename);
-
- 
     const { width, height } = await getImageDimensions(filepath);
-
 
     await generateThumbnail(filename);
 
- 
     const description = (req.body.description || "").trim();
 
     const tags = req.body.tags
@@ -52,10 +40,8 @@ export async function uploadImage(req, res, next) {
           .filter((tag) => tag.length > 0)
       : [];
 
-
     const uniqueTags = [...new Set(tags)];
 
-   
     const image = await Image.create({
       filename,
       originalName: originalname,
@@ -66,7 +52,6 @@ export async function uploadImage(req, res, next) {
       description,
       tags: uniqueTags,
     });
-
 
     return res.status(201).json({
       message: "Image uploaded successfully",
