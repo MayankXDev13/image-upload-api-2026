@@ -168,10 +168,10 @@ export async function getImage(req, res, next) {
     const image = await Image.findById(req.params.id).lean();
 
     if (!image) {
-      return res.status(404).json({ error: "Image not found" });
+      return res.status(404).json({ error: { message: "Image not found" } });
     }
 
-    return res.status(200).json({ data: image });
+    return res.status(200).json(image);
   } catch (error) {
     next(error);
   }
@@ -195,14 +195,17 @@ export async function downloadImage(req, res, next) {
     const image = await Image.findById(req.params.id).lean();
 
     if (!image) {
-      return res.status(404).json({ error: "Image not found" });
+      return res.status(404).json({ error: { message: "Image not found" } });
     }
-const filepath = path.join(__dirname, "../../uploads", image.filename);
-    const thumbnailPath = path.join(
-      __dirname,
-      "../../uploads/thumbnails",
-      `${image.filename}.jpg`,
-    );
+
+    const filepath = path.join(__dirname, "../../uploads", image.filename);
+
+    if (!fs.existsSync(filepath)) {
+      return res.status(404).json({ error: { message: "File not found" } });
+    }
+
+    res.setHeader("Content-Type", image.mimetype);
+    res.setHeader("Content-Disposition", `attachment; filename="${image.originalName}"`);
 
     return res.sendFile(filepath);
   } catch (error) {
@@ -227,29 +230,22 @@ export async function downloadThumbnail(req, res, next) {
     const image = await Image.findById(req.params.id).lean();
 
     if (!image) {
-      return res.status(404).json({ error: "Image not found" });
+      return res.status(404).json({ error: { message: "Image not found" } });
     }
 
-    // construct thumbnail path
-    const thumbnailName = `${image.filename}.jpg`;
     const thumbnailPath = path.join(
       __dirname,
-      "../uploads/thumbnails",
-      thumbnailName,
+      "../../uploads/thumbnails",
+      image.thumbnailFilename,
     );
 
-    // check if thumbnail exists
     if (!fs.existsSync(thumbnailPath)) {
-      return res.status(404).json({ error: "File not found" });
+      return res.status(404).json({ error: { message: "File not found" } });
     }
 
-    // set headers
     res.setHeader("Content-Type", "image/jpeg");
+    res.setHeader("Content-Disposition", `inline; filename="${image.thumbnailFilename}"`);
 
-    // optional: inline display instead of download
-    res.setHeader("Content-Disposition", `inline; filename="${thumbnailName}"`);
-
-    // send file
     return res.sendFile(thumbnailPath);
   } catch (error) {
     next(error);
@@ -271,7 +267,7 @@ export async function deleteImage(req, res, next) {
     const image = await Image.findById(req.params.id).lean();
 
     if (!image) {
-      return res.status(404).json({ error: "Image not found" });
+      return res.status(404).json({ error: { message: "Image not found" } });
     }
 
     const filePath = path.join(__dirname, "../../uploads", image.filename);
@@ -286,8 +282,8 @@ export async function deleteImage(req, res, next) {
 
     const thumbnailPath = path.join(
       __dirname,
-      "../uploads/thumbnails",
-      `${image.filename}.jpg`,
+      "../../uploads/thumbnails",
+      image.thumbnailFilename,
     );
 
     try {
