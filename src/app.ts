@@ -5,6 +5,8 @@ import { fileURLToPath } from "url";
 import imageRoutes from "./routes/image.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import { notFound } from "./middlewares/notFound.middleware.js";
+import morganMiddleware from "./logger/morgan.logger.js";
+import logger from "./logger/winston.logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,6 +15,7 @@ export function createApp(): Express {
   const app = express();
 
   app.use(express.json());
+  app.use(morganMiddleware);
 
   const uploadsDir = path.join(__dirname, "../uploads");
   const thumbnailsDir = path.join(uploadsDir, "thumbnails");

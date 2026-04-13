@@ -35,12 +35,7 @@ const fileFilter = (
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(
-      new Error(
-        "Invalid file type. Only JPEG, PNG, and GIF are allowed.",
-      ) as Error | null,
-      false,
-    );
+    cb(null, false);
   }
 };
 
