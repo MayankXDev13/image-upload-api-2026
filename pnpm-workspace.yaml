@@ -1,3 +1,4 @@
 ignoredBuiltDependencies:
+  - esbuild
   - mongodb-memory-server
   - sharp

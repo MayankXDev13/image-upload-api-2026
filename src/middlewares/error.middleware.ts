@@ -20,7 +20,7 @@ export function errorHandler(
   err: unknown,
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ): void {
   if (!(err instanceof Error)) {
     res.status(500).json({

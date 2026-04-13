@@ -28,14 +28,19 @@ const storage = multer.diskStorage({
 const fileFilter = (
   _req: unknown,
   file: Express.Multer.File,
-  cb: multer.FileFilterCallback
+  cb: multer.FileFilterCallback,
 ): void => {
   const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
 
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Invalid file type. Only JPEG, PNG, and GIF are allowed.") as Error | null, false);
+    cb(
+      new Error(
+        "Invalid file type. Only JPEG, PNG, and GIF are allowed.",
+      ) as Error | null,
+      false,
+    );
   }
 };
 

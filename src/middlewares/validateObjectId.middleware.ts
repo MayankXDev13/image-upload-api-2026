@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 export function validateObjectId(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void {
   const { id } = req.params;
 

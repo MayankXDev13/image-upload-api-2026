@@ -5,7 +5,8 @@ import { connectDB } from "./db/connect.js";
 async function start(): Promise<void> {
   try {
     const port = process.env.PORT || "3000";
-    const uri = process.env.MONGO_URI || "mongodb://localhost:27017/image_upload_api";
+    const uri =
+      process.env.MONGO_URI || "mongodb://localhost:27017/image_upload_api";
 
     await connectDB(uri);
     const app = createApp();
